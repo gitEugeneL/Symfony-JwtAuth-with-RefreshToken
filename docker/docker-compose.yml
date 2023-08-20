@@ -22,3 +22,19 @@ services:
       - ..:/var/www:rw
     depends_on:
       - php
+
+  postgres:
+    container_name: postgres
+    build:
+      context: ./postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - ${POSTGRES_PORT}:5432
+    volumes:
+      - database:/var/lib/postgresql/data:rw
+
+volumes:
+  database:

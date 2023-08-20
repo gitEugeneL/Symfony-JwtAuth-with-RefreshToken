@@ -8,6 +8,9 @@ RUN apk add --update linux-headers
 RUN pecl install xdebug && docker-php-ext-enable xdebug;
 COPY ./docker/php/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 
+# Postgres driver
+RUN apk add --no-cache libpq-dev && docker-php-ext-install pdo_pgsql
+
 # Install Symfony-cli
 RUN apk add --no-cache bash
 RUN curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.alpine.sh' | bash
