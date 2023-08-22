@@ -27,4 +27,13 @@ class UserService
         $this->userRepository->save($user, true);
         return ['userId' => $user->getId()];
     }
+
+    public function delete(User $authUser): void
+    {
+        $user = $this->userRepository->find($authUser);
+        if (is_null($user) || $user->getId() !== $authUser->getId())
+            $this->apiException->exception("User doesn't exist", 422);
+
+        $this->userRepository->remove($user, true);
+    }
 }

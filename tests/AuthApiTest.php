@@ -2,29 +2,60 @@
 
 namespace App\Tests;
 
-
 class AuthApiTest extends AbstractApiTest
 {
-    public function testCreate(): void
+    public function testCreateUser(): void
     {
-        $response = $this->post('api/user/create', [
-            'email' => $this->testUser['username'],
-            'password' => $this->testUser['password']
-        ]);
+        $response = $this->post(
+            uri: 'api/user/create',
+            data: [
+                'email' => AuthData::getUser()['username'],
+                'password' => AuthData::getUser()['password']
+            ]
+        );
         $this->assertSame(201, $response->getStatusCode());
     }
 
     /**
-     * @depends testCreate
+     * @depends testCreateUser
      */
     public function testLogin(): void
     {
-        $response = $this->post('/api/login', [
-            'username' => $this->testUser['username'],
-            'password' => $this->testUser['password']
-        ]);
-        $this->accessToken = json_decode($response->getContent(), true)['token'];
+        $response = $this->post(
+            uri: '/api/login',
+            data: [
+                'username' => AuthData::getUser()['username'],
+                'password' => AuthData::getUser()['password']
+            ]
+        );
+        AuthData::setAccessToken(json_decode($response->getContent(), true)['token']);
+        AuthData::setRefreshToken($response->headers->getCookies()[0]->getValue());
+
         $this->assertSame(200, $response->getStatusCode());
+    }
+
+    /**
+     * @depends testLogin
+     */
+    public function testRefreshToken(): void
+    {
+        $response = $this->post(
+            uri: '/api/refresh',
+            refreshToken: AuthData::getRefreshToken()
+        );
+        $this->assertSame(200, $response->getStatusCode());
+    }
+
+    /**
+     * @depends testRefreshToken
+     */
+    public function testDeleteUser(): void
+    {
+        $response = $this->post(
+            uri: '/api/user/delete',
+            accessToken: AuthData::getAccessToken()
+        );
+        $this->assertSame(201, $response->getStatusCode());
     }
 
 }

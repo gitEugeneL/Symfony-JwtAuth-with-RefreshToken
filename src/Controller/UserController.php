@@ -9,6 +9,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route('/api/user')]
@@ -30,5 +32,14 @@ class UserController extends AbstractController
 
         $result = $this->userService->create($dto);
         return $this->json($result, 201);
+    }
+
+    #[IsGranted('ROLE_USER')]
+    #[Route('/delete', methods: ['POST'])]
+    public function delete(TokenStorageInterface $tokenStorage): JsonResponse
+    {
+        $authUser = $tokenStorage->getToken()->getUser();
+        $this->userService->delete($authUser);
+        return $this->json("successfully deleted", 201);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Tests;
 
+use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser as KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
@@ -10,19 +11,12 @@ abstract class AbstractApiTest extends WebTestCase
 {
     protected KernelBrowser $client;
 
-    protected array $testUser = [
-        'username' => 'test@email.com',
-        'password' => '00000000'
-    ];
-
-    protected string $accessToken;
-
     protected function setUp(): void
     {
         $this->client = static::createClient();
     }
 
-    protected function post(string $uri, array $data = [], $accessToken = null): Response
+    protected function post(string $uri, array $data = [], string $accessToken = null, string $refreshToken = null): Response
     {
         $headers = [
             'HTTP_ACCEPT' => 'application/json',
@@ -31,6 +25,10 @@ abstract class AbstractApiTest extends WebTestCase
         ];
         if ($accessToken) {
             $headers['HTTP_AUTHORIZATION'] = 'Bearer ' . $accessToken;
+        }
+        if($refreshToken) {
+            $cookie = new Cookie('refreshToken', $refreshToken);
+            $this->client->getCookieJar()->set($cookie);
         }
 
         $this->client->request(
