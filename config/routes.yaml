@@ -8,5 +8,9 @@ controllers:
 api_refresh_token:
     path: /api/refresh
 
+api_token_invalidate:
+    path: /api/invalidate
+
 api_login_check:
     path: /api/login
+

@@ -21,6 +21,8 @@ security:
             jwt: ~
             refresh_jwt:
                 check_path: /api/refresh
+            logout:
+                path: /api/invalidate
 
     access_control:
         - { path: ^/api/login,        roles: PUBLIC_ACCESS }
