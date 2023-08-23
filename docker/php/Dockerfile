@@ -8,6 +8,13 @@ RUN apk add --update linux-headers
 RUN pecl install xdebug && docker-php-ext-enable xdebug;
 COPY ./docker/php/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 
+# Xdebug
+ARG XDEBUG=false
+RUN if [ ${XDEBUG} = true ]; \
+    then \
+      pecl install xdebug && docker-php-ext-enable xdebug; \
+    fi;
+
 # Postgres driver
 RUN apk add --no-cache libpq-dev && docker-php-ext-install pdo_pgsql
 
