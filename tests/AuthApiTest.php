@@ -43,6 +43,8 @@ class AuthApiTest extends AbstractApiTest
             uri: '/api/refresh',
             refreshToken: AuthData::getRefreshToken()
         );
+        AuthData::setRefreshToken($response->headers->getCookies()[0]->getValue());
+
         $this->assertSame(200, $response->getStatusCode());
     }
 
@@ -58,4 +60,15 @@ class AuthApiTest extends AbstractApiTest
         $this->assertSame(201, $response->getStatusCode());
     }
 
+    /**
+     * @depends testDeleteUser
+     */
+    public function testInvalidateRefreshToken(): void
+    {
+        $response = $this->post(
+            uri: '/api/invalidate',
+            refreshToken: AuthData::getRefreshToken()
+        );
+        $this->assertSame(200, $response->getStatusCode());
+    }
 }
