@@ -35,7 +35,7 @@ class UserController extends AbstractController
     }
 
     #[IsGranted('ROLE_USER')]
-    #[Route('/delete', methods: ['POST'])]
+    #[Route('/delete', methods: ['DELETE'])]
     public function delete(TokenStorageInterface $tokenStorage): JsonResponse
     {
         $authUser = $tokenStorage->getToken()->getUser();

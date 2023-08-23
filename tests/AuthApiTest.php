@@ -51,7 +51,7 @@ class AuthApiTest extends AbstractApiTest
      */
     public function testDeleteUser(): void
     {
-        $response = $this->post(
+        $response = $this->delete(
             uri: '/api/user/delete',
             accessToken: AuthData::getAccessToken()
         );
